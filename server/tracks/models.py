@@ -1,5 +1,5 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     phone = models.CharField(max_length=10, blank=False)
@@ -36,7 +36,6 @@ class Rating(models.Model):
     reporter = models.ForeignKey('User', on_delete=models.CASCADE, related_name='ratings')
     date = models.DateTimeField(auto_now_add=True)
     points = models.IntegerField()
-
     
     def __str__(self):
         return f"{self.reporter.username} - {self.place.name} ({self.points})"
