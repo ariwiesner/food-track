@@ -36,8 +36,6 @@ class abstractFunctions:
         else:
             item = model.objects.all()
             serialized_data = serializer(item, many=True).data
-        
-
             return JsonResponse(serialized_data, status=200, safe=False)
 
     @staticmethod

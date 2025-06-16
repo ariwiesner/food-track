@@ -16,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     password = serializers.CharField(min_length=8, max_length=15, write_only=True)
     username = serializers.CharField()
+    # this is the related name we used in 'added_by' field on 'Place' model.
     added_places = PlaceSerializer(many=True, read_only=True)
 
     class Meta:
