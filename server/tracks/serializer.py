@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Phone number must be exactly 10 digits!")
         return value
 
-    def create_user(self, validated_data):
+    def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],

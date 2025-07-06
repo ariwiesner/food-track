@@ -2,11 +2,28 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class abstractFunctions:
+    @staticmethod
+    def authenticate_request(request):
+        auth = JWTAuthentication()
+        try:
+            user_auth_tuple = auth.authenticate(request)
+            if user_auth_tuple is None:
+                raise AuthenticationFailed("Authentication credentials were not provided.")
+            request.user, _ = user_auth_tuple
+        except AuthenticationFailed as e:
+            return JsonResponse({'detail': str(e)}, status=401)
+        return None
     
     @staticmethod
     def add(request, serializer):
+        auth_error = abstractFunctions.authenticate_request(request)
+        if auth_error:
+            return auth_error
+
         if request.method != "POST":
             return JsonResponse({'error': "Only a POST method is allowed"}, status=405)
         
@@ -26,6 +43,10 @@ class abstractFunctions:
 
     @staticmethod
     def get(request, model, serializer, id = None):
+        auth_error = abstractFunctions.authenticate_request(request)
+        if auth_error:
+            return auth_error
+
         if request.method != "GET":
             return JsonResponse({'error': "Only GET method is allowed"}, status=405)
         
@@ -40,6 +61,10 @@ class abstractFunctions:
 
     @staticmethod
     def update(request, model, serializer, id):
+        auth_error = abstractFunctions.authenticate_request(request)
+        if auth_error:
+            return auth_error
+
         if request.method != "PUT":
             return JsonResponse({'error': "Only PUT method is allowed"}, status=405)
         
@@ -56,6 +81,10 @@ class abstractFunctions:
 
     @staticmethod
     def delete(request, model, id):
+        auth_error = abstractFunctions.authenticate_request(request)
+        if auth_error:
+            return auth_error
+
         if request.method !="DELETE":
             return JsonResponse({'error': "Only DELETE method is allowed"}, status=405)
         item = get_object_or_404(model, id=id)
